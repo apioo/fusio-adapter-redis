@@ -66,7 +66,8 @@ class RedisTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(Container::class, $builder->getForm());
 
         $elements = $builder->getForm()->getProperty('element');
-        $this->assertEquals(1, count($elements));
+        $this->assertEquals(2, count($elements));
         $this->assertInstanceOf(Input::class, $elements[0]);
+        $this->assertInstanceOf(Input::class, $elements[1]);
     }
 }
