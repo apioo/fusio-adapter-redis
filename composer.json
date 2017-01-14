@@ -1,6 +1,6 @@
 {
   "name": "fusio/adapter-redis",
-  "description": "Adapter which provides a connection to work with a Redis service",
+  "description": "Provides a connection to work with a Redis service",
   "homepage": "http://fusio-project.org",
   "keywords": ["fusio-adapter"],
   "license": "AGPL-3.0",
