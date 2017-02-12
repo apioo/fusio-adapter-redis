@@ -21,6 +21,7 @@
 
 namespace Fusio\Adapter\Redis\Connection;
 
+use Fusio\Engine\Connection\PingableInterface;
 use Fusio\Engine\ConnectionInterface;
 use Fusio\Engine\Form\BuilderInterface;
 use Fusio\Engine\Form\ElementFactoryInterface;
@@ -34,7 +35,7 @@ use Predis\Client;
  * @license http://www.gnu.org/licenses/agpl-3.0
  * @link    http://fusio-project.org
  */
-class Redis implements ConnectionInterface
+class Redis implements ConnectionInterface, PingableInterface
 {
     public function getName()
     {
@@ -65,5 +66,19 @@ class Redis implements ConnectionInterface
     {
         $builder->add($elementFactory->newInput('host', 'Host', 'text', 'Host of the redis server'));
         $builder->add($elementFactory->newInput('port', 'Port', 'text', 'Port of the redis server'));
+    }
+
+    public function ping($connection)
+    {
+        if ($connection instanceof Client) {
+            try {
+                $connection->ping();
+
+                return true;
+            } catch (\RedisException $e) {
+            }
+        }
+
+        return false;
     }
 }

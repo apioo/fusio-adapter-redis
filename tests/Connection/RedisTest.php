@@ -42,17 +42,17 @@ class RedisTest extends \PHPUnit_Framework_TestCase
 
     public function testGetConnection()
     {
-        /** @var Redis $connection */
-        $connection = $this->getConnectionFactory()->factory(Redis::class);
+        /** @var Redis $connectionFactory */
+        $connectionFactory = $this->getConnectionFactory()->factory(Redis::class);
 
         $config = new Parameters([
             'host' => '127.0.0.1',
             'port' => '6379',
         ]);
 
-        $client = $connection->getConnection($config);
+        $connection = $connectionFactory->getConnection($config);
 
-        $this->assertInstanceOf(Client::class, $client);
+        $this->assertInstanceOf(Client::class, $connection);
     }
 
     public function testConfigure()
@@ -69,5 +69,20 @@ class RedisTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(2, count($elements));
         $this->assertInstanceOf(Input::class, $elements[0]);
         $this->assertInstanceOf(Input::class, $elements[1]);
+    }
+
+    public function testPing()
+    {
+        /** @var Redis $connectionFactory */
+        $connectionFactory = $this->getConnectionFactory()->factory(Redis::class);
+
+        $config = new Parameters([
+            'host' => '127.0.0.1',
+            'port' => '6379',
+        ]);
+
+        $connection = $connectionFactory->getConnection($config);
+
+        $this->assertTrue($connectionFactory->ping($connection));
     }
 }
