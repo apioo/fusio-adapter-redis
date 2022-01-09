@@ -43,7 +43,6 @@ class RedisTest extends TestCase
 
     public function testGetConnection()
     {
-        /** @var Redis $connectionFactory */
         $connectionFactory = $this->getConnectionFactory()->factory(Redis::class);
 
         $config = new Parameters([
@@ -54,6 +53,10 @@ class RedisTest extends TestCase
         $connection = $connectionFactory->getConnection($config);
 
         $this->assertInstanceOf(Client::class, $connection);
+
+        $connection->set('foo', 'bar');
+
+        $this->assertEquals('bar', $connection->get('foo'));
     }
 
     public function testConfigure()
