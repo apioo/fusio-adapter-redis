@@ -1,5 +1,14 @@
 {
+  "actionClass": [
+    "Fusio\\Adapter\\Redis\\Action\\RedisHashDelete",
+    "Fusio\\Adapter\\Redis\\Action\\RedisHashGet",
+    "Fusio\\Adapter\\Redis\\Action\\RedisHashGetAll",
+    "Fusio\\Adapter\\Redis\\Action\\RedisHashSet"
+  ],
   "connectionClass": [
     "Fusio\\Adapter\\Redis\\Connection\\Redis"
+  ],
+  "routesClass": [
+    "Fusio\\Adapter\\Redis\\Routes\\RedisHash"
   ]
 }

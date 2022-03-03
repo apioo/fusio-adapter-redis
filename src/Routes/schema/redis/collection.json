@@ -1,0 +1,16 @@
+{
+  "definitions": {
+    "Redis_Hash_Collection": {
+      "type": "object",
+      "properties": {
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "$ref": "Redis_Hash_Collection"
+}

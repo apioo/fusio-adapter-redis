@@ -1,0 +1,13 @@
+{
+  "definitions": {
+    "Redis_Hash_Entity": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "$ref": "Redis_Hash_Entity"
+}
