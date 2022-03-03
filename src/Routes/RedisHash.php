@@ -99,7 +99,7 @@ class RedisHash implements ProviderInterface
             ]
         ]);
 
-        $setup->addRoute(1, '/:id', 'Fusio\Impl\Controller\SchemaApiController', [], [
+        $setup->addRoute(1, '/:field', 'Fusio\Impl\Controller\SchemaApiController', [], [
             [
                 'version' => 1,
                 'methods' => [

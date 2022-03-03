@@ -56,7 +56,7 @@ class RedisHashSet extends RedisAbstract
             throw new BadRequestException('No field provided');
         }
 
-        $value = $request->get('value');
+        $value = $request->getPayload();
         if (empty($value)) {
             throw new BadRequestException('No value provided');
         }
