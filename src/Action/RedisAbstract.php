@@ -21,12 +21,14 @@
 
 namespace Fusio\Adapter\Redis\Action;
 
-use Predis\Client;
 use Fusio\Engine\ActionAbstract;
 use Fusio\Engine\Exception\ConfigurationException;
 use Fusio\Engine\Form\BuilderInterface;
 use Fusio\Engine\Form\ElementFactoryInterface;
 use Fusio\Engine\ParametersInterface;
+use Predis\Client;
+use PSX\Http\Exception\BadRequestException;
+use PSX\Record\RecordInterface;
 
 /**
  * RedisAbstract
@@ -50,5 +52,18 @@ abstract class RedisAbstract extends ActionAbstract
         }
 
         return $connection;
+    }
+
+    protected function getValue($body): mixed
+    {
+        if ($body instanceof \stdClass && isset($body->value)) {
+            return $body->value;
+        } elseif (is_array($body) && isset($body['value'])) {
+            return $body['value'];
+        } elseif ($body instanceof RecordInterface && $body->hasProperty('value')) {
+            return $body->getProperty('value');
+        } else {
+            throw new BadRequestException('Provided an invalid request body');
+        }
     }
 }

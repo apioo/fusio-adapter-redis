@@ -26,7 +26,7 @@ use Fusio\Engine\Exception\ConfigurationException;
 use Fusio\Engine\ParametersInterface;
 use Fusio\Engine\RequestInterface;
 use PSX\Http\Environment\HttpResponseInterface;
-use PSX\Http\Exception\BadRequestException;
+use PSX\Http\Exception as StatusCode;
 
 /**
  * RedisHashSet
@@ -53,12 +53,12 @@ class RedisHashSet extends RedisAbstract
 
         $field = $request->get('field');
         if (empty($field)) {
-            throw new BadRequestException('No field provided');
+            throw new StatusCode\BadRequestException('No field provided');
         }
 
-        $value = $request->getPayload();
+        $value = $this->getValue($request->getPayload());
         if (empty($value)) {
-            throw new BadRequestException('No value provided');
+            throw new StatusCode\BadRequestException('No value provided');
         }
 
         $return = $connection->hset($key, $field, $value);

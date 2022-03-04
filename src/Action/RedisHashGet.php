@@ -26,7 +26,7 @@ use Fusio\Engine\Exception\ConfigurationException;
 use Fusio\Engine\ParametersInterface;
 use Fusio\Engine\RequestInterface;
 use PSX\Http\Environment\HttpResponseInterface;
-use PSX\Http\Exception\BadRequestException;
+use PSX\Http\Exception as StatusCode;
 
 /**
  * RedisHashGet
@@ -46,14 +46,18 @@ class RedisHashGet extends RedisAbstract
     {
         $connection = $this->getConnection($configuration);
 
-        $key = $request->get('key');
+        $key = $configuration->get('key');
         if (empty($key)) {
             throw new ConfigurationException('No key provided');
         }
 
         $field = $request->get('field');
         if (empty($field)) {
-            throw new BadRequestException('No field provided');
+            throw new StatusCode\BadRequestException('No field provided');
+        }
+
+        if (!$connection->hexists($key, $field)) {
+            throw new StatusCode\NotFoundException('Provided field does not exist');
         }
 
         $return = $connection->hget($key, $field);

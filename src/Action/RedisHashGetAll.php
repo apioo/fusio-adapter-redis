@@ -26,7 +26,6 @@ use Fusio\Engine\Exception\ConfigurationException;
 use Fusio\Engine\ParametersInterface;
 use Fusio\Engine\RequestInterface;
 use PSX\Http\Environment\HttpResponseInterface;
-use PSX\Http\Exception\BadRequestException;
 
 /**
  * RedisHashGetAll
@@ -46,7 +45,7 @@ class RedisHashGetAll extends RedisAbstract
     {
         $connection = $this->getConnection($configuration);
 
-        $key = $request->get('key');
+        $key = $configuration->get('key');
         if (empty($key)) {
             throw new ConfigurationException('No key provided');
         }
