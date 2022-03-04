@@ -4,11 +4,14 @@
       "type": "object",
       "properties": {
         "values": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "$ref": "Redis_Hash_Collection_Values"
         }
+      }
+    },
+    "Redis_Hash_Collection_Values": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
       }
     }
   },
