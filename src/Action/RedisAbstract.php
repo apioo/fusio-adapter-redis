@@ -42,6 +42,7 @@ abstract class RedisAbstract extends ActionAbstract
     public function configure(BuilderInterface $builder, ElementFactoryInterface $elementFactory): void
     {
         $builder->add($elementFactory->newConnection('connection', 'Connection', 'The Redis connection which should be used'));
+        $builder->add($elementFactory->newInput('key', 'Key', 'text', 'The key'));
     }
 
     protected function getConnection(ParametersInterface $configuration): Client
