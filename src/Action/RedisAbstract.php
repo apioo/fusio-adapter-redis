@@ -54,6 +54,16 @@ abstract class RedisAbstract extends ActionAbstract
         return $connection;
     }
 
+    protected function getKey(ParametersInterface $configuration): string
+    {
+        $key = $configuration->get('key');
+        if (empty($key)) {
+            throw new ConfigurationException('No key provided');
+        }
+
+        return $key;
+    }
+
     protected function getValue($body): mixed
     {
         if ($body instanceof \stdClass && isset($body->value)) {

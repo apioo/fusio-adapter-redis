@@ -44,11 +44,7 @@ class RedisHashGetAll extends RedisAbstract
     public function handle(RequestInterface $request, ParametersInterface $configuration, ContextInterface $context): HttpResponseInterface
     {
         $connection = $this->getConnection($configuration);
-
-        $key = $configuration->get('key');
-        if (empty($key)) {
-            throw new ConfigurationException('No key provided');
-        }
+        $key = $this->getKey($configuration);
 
         $return = $connection->hgetall($key);
 
