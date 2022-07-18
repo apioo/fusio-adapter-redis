@@ -8,7 +8,7 @@
   "connectionClass": [
     "Fusio\\Adapter\\Redis\\Connection\\Redis"
   ],
-  "routesClass": [
-    "Fusio\\Adapter\\Redis\\Routes\\RedisHash"
+  "generatorClass": [
+    "Fusio\\Adapter\\Redis\\Generator\\RedisHash"
   ]
 }

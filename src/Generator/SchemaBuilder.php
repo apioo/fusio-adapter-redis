@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Fusio\Adapter\Redis\Routes;
+namespace Fusio\Adapter\Redis\Generator;
 
 /**
  * SchemaBuilder
