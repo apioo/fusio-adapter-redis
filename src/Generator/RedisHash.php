@@ -55,29 +55,27 @@ class RedisHash implements ProviderInterface
 
     public function setup(SetupInterface $setup, string $basePath, ParametersInterface $configuration): void
     {
-        $prefix = $this->getPrefix($basePath);
+        $schemaCollection = $setup->addSchema('Redis_Collection', $this->schemaBuilder->getCollection());
+        $schemaEntity = $setup->addSchema('Redis_Entity', $this->schemaBuilder->getEntity());
+        $schemaRequest = $setup->addSchema('Redis_Request', $this->schemaBuilder->getRequest());
+        $schemaResponse = $setup->addSchema('Redis_Response', $this->schemaBuilder->getResponse());
 
-        $schemaCollection = $setup->addSchema('Redis_Hash_Collection', $this->schemaBuilder->getCollection());
-        $schemaEntity = $setup->addSchema('Redis_Hash_Entity', $this->schemaBuilder->getEntity());
-        $schemaRequest = $setup->addSchema('Redis_Hash_Request', $this->schemaBuilder->getRequest());
-        $schemaResponse = $setup->addSchema('Redis_Hash_Response', $this->schemaBuilder->getResponse());
-
-        $fetchAllAction = $setup->addAction($prefix . '_Redis_All', RedisHashGetAll::class, PhpClass::class, [
+        $fetchAllAction = $setup->addAction('Redis_All', RedisHashGetAll::class, PhpClass::class, [
             'connection' => $configuration->get('connection'),
             'key' => $configuration->get('key'),
         ]);
 
-        $fetchRowAction = $setup->addAction($prefix . '_Redis_Row', RedisHashGet::class, PhpClass::class, [
+        $fetchRowAction = $setup->addAction('Redis_Row', RedisHashGet::class, PhpClass::class, [
             'connection' => $configuration->get('connection'),
             'key' => $configuration->get('key'),
         ]);
 
-        $deleteAction = $setup->addAction($prefix . '_Delete', RedisHashDelete::class, PhpClass::class, [
+        $deleteAction = $setup->addAction('Redis_Delete', RedisHashDelete::class, PhpClass::class, [
             'connection' => $configuration->get('connection'),
             'key' => $configuration->get('key'),
         ]);
 
-        $updateAction = $setup->addAction($prefix . '_Update', RedisHashSet::class, PhpClass::class, [
+        $updateAction = $setup->addAction('Redis_Update', RedisHashSet::class, PhpClass::class, [
             'connection' => $configuration->get('connection'),
             'key' => $configuration->get('key'),
         ]);
@@ -140,10 +138,5 @@ class RedisHash implements ProviderInterface
     {
         $builder->add($elementFactory->newConnection('connection', 'Connection', 'The SQL connection which should be used'));
         $builder->add($elementFactory->newInput('key', 'Key', 'text', 'Name of the key'));
-    }
-
-    private function getPrefix(string $path): string
-    {
-        return implode('_', array_map('ucfirst', array_filter(explode('/', $path))));
     }
 }
