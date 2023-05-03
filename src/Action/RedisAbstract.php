@@ -71,7 +71,7 @@ abstract class RedisAbstract extends ActionAbstract
             return $body->value;
         } elseif (is_array($body) && isset($body['value'])) {
             return $body['value'];
-        } elseif ($body instanceof RecordInterface && $body->has('value')) {
+        } elseif ($body instanceof RecordInterface && $body->containsKey('value')) {
             return $body->get('value');
         } else {
             throw new BadRequestException('Provided an invalid request body');
