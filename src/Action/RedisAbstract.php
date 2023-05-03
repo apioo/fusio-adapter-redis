@@ -65,14 +65,14 @@ abstract class RedisAbstract extends ActionAbstract
         return $key;
     }
 
-    protected function getValue($body): mixed
+    protected function getValue(mixed $body): mixed
     {
         if ($body instanceof \stdClass && isset($body->value)) {
             return $body->value;
         } elseif (is_array($body) && isset($body['value'])) {
             return $body['value'];
-        } elseif ($body instanceof RecordInterface && $body->hasProperty('value')) {
-            return $body->getProperty('value');
+        } elseif ($body instanceof RecordInterface && $body->has('value')) {
+            return $body->get('value');
         } else {
             throw new BadRequestException('Provided an invalid request body');
         }

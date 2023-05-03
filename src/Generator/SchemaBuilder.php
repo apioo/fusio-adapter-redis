@@ -30,27 +30,27 @@ namespace Fusio\Adapter\Redis\Generator;
  */
 class SchemaBuilder
 {
-    public function getCollection()
+    public function getCollection(): array
     {
         return $this->readSchema(__DIR__ . '/schema/redis/collection.json');
     }
 
-    public function getEntity()
+    public function getEntity(): array
     {
         return $this->readSchema(__DIR__ . '/schema/redis/entity.json');
     }
 
-    public function getRequest()
+    public function getRequest(): array
     {
         return $this->readSchema(__DIR__ . '/schema/redis/request.json');
     }
 
-    public function getResponse()
+    public function getResponse(): array
     {
         return $this->readSchema(__DIR__ . '/schema/redis/response.json');
     }
 
-    private function readSchema(string $file)
+    private function readSchema(string $file): array
     {
         return \json_decode(\file_get_contents($file), true);
     }
