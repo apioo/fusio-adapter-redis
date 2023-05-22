@@ -28,9 +28,15 @@ use Fusio\Adapter\Redis\Action\RedisHashSet;
 use Fusio\Engine\Factory\Resolver\PhpClass;
 use Fusio\Engine\Form\BuilderInterface;
 use Fusio\Engine\Form\ElementFactoryInterface;
-use Fusio\Engine\ParametersInterface;
 use Fusio\Engine\Generator\ProviderInterface;
 use Fusio\Engine\Generator\SetupInterface;
+use Fusio\Engine\ParametersInterface;
+use Fusio\Engine\Schema\SchemaName;
+use Fusio\Model\Backend\Action;
+use Fusio\Model\Backend\ActionConfig;
+use Fusio\Model\Backend\Operation;
+use Fusio\Model\Backend\Schema;
+use Fusio\Model\Backend\SchemaSource;
 
 /**
  * RedisHash
@@ -41,12 +47,13 @@ use Fusio\Engine\Generator\SetupInterface;
  */
 class RedisHash implements ProviderInterface
 {
-    private SchemaBuilder $schemaBuilder;
-
-    public function __construct()
-    {
-        $this->schemaBuilder = new SchemaBuilder();
-    }
+    private const SCHEMA_GET_ALL = 'Redis_GetAll';
+    private const SCHEMA_GET = 'Redis_Get';
+    private const SCHEMA_SET = 'Redis_Set';
+    private const ACTION_GET_ALL = 'Redis_GetAll';
+    private const ACTION_GET = 'Redis_Get';
+    private const ACTION_SET = 'Redis_Set';
+    private const ACTION_DELETE = 'Redis_Delete';
 
     public function getName(): string
     {
@@ -55,88 +62,153 @@ class RedisHash implements ProviderInterface
 
     public function setup(SetupInterface $setup, string $basePath, ParametersInterface $configuration): void
     {
-        $schemaCollection = $setup->addSchema('Redis_Collection', $this->schemaBuilder->getCollection());
-        $schemaEntity = $setup->addSchema('Redis_Entity', $this->schemaBuilder->getEntity());
-        $schemaRequest = $setup->addSchema('Redis_Request', $this->schemaBuilder->getRequest());
-        $schemaResponse = $setup->addSchema('Redis_Response', $this->schemaBuilder->getResponse());
+        $setup->addSchema($this->makeGetAllSchema());
+        $setup->addSchema($this->makeGetSchema());
+        $setup->addSchema($this->makeSetSchema());
 
-        $fetchAllAction = $setup->addAction('Redis_All', RedisHashGetAll::class, PhpClass::class, [
-            'connection' => $configuration->get('connection'),
-            'key' => $configuration->get('key'),
-        ]);
+        $setup->addAction($this->makeGetAllAction($configuration));
+        $setup->addAction($this->makeGetAction($configuration));
+        $setup->addAction($this->makeSetAction($configuration));
+        $setup->addAction($this->makeDeleteAction($configuration));
 
-        $fetchRowAction = $setup->addAction('Redis_Row', RedisHashGet::class, PhpClass::class, [
-            'connection' => $configuration->get('connection'),
-            'key' => $configuration->get('key'),
-        ]);
-
-        $deleteAction = $setup->addAction('Redis_Delete', RedisHashDelete::class, PhpClass::class, [
-            'connection' => $configuration->get('connection'),
-            'key' => $configuration->get('key'),
-        ]);
-
-        $updateAction = $setup->addAction('Redis_Update', RedisHashSet::class, PhpClass::class, [
-            'connection' => $configuration->get('connection'),
-            'key' => $configuration->get('key'),
-        ]);
-
-        $setup->addRoute(1, '/', 'Fusio\Impl\Controller\SchemaApiController', [], [
-            [
-                'version' => 1,
-                'methods' => [
-                    'GET' => [
-                        'active' => true,
-                        'public' => true,
-                        'description' => 'Returns a collection of fields',
-                        'responses' => [
-                            200 => $schemaCollection,
-                        ],
-                        'action' => $fetchAllAction,
-                    ],
-                ],
-            ]
-        ]);
-
-        $setup->addRoute(1, '/:field', 'Fusio\Impl\Controller\SchemaApiController', [], [
-            [
-                'version' => 1,
-                'methods' => [
-                    'GET' => [
-                        'active' => true,
-                        'public' => true,
-                        'description' => 'Returns a single field',
-                        'responses' => [
-                            200 => $schemaEntity,
-                        ],
-                        'action' => $fetchRowAction,
-                    ],
-                    'PUT' => [
-                        'active' => true,
-                        'public' => false,
-                        'description' => 'Updates an existing field',
-                        'request' => $schemaRequest,
-                        'responses' => [
-                            200 => $schemaResponse,
-                        ],
-                        'action' => $updateAction,
-                    ],
-                    'DELETE' => [
-                        'active' => true,
-                        'public' => false,
-                        'description' => 'Deletes an existing field',
-                        'responses' => [
-                            200 => $schemaResponse,
-                        ],
-                        'action' => $deleteAction,
-                    ]
-                ],
-            ]
-        ]);
+        $setup->addOperation($this->makeGetAllOperation());
+        $setup->addOperation($this->makeGetOperation());
+        $setup->addOperation($this->makeSetOperation());
+        $setup->addOperation($this->makeDeleteOperation());
     }
 
     public function configure(BuilderInterface $builder, ElementFactoryInterface $elementFactory): void
     {
         $builder->add($elementFactory->newConnection('connection', 'Connection', 'The SQL connection which should be used'));
         $builder->add($elementFactory->newInput('key', 'Key', 'text', 'Name of the key'));
+    }
+
+    private function makeGetAllSchema(): Schema
+    {
+        $schema = new Schema();
+        $schema->setName(self::SCHEMA_GET_ALL);
+        $schema->setSource(SchemaSource::fromStdClass(\json_decode(\file_get_contents(__DIR__ . '/schema/get_all.json'))));
+        return $schema;
+    }
+
+    private function makeGetSchema(): Schema
+    {
+        $schema = new Schema();
+        $schema->setName(self::SCHEMA_GET);
+        $schema->setSource(SchemaSource::fromStdClass(\json_decode(\file_get_contents(__DIR__ . '/schema/get.json'))));
+        return $schema;
+    }
+
+    private function makeSetSchema(): Schema
+    {
+        $schema = new Schema();
+        $schema->setName(self::SCHEMA_SET);
+        $schema->setSource(SchemaSource::fromStdClass(\json_decode(\file_get_contents(__DIR__ . '/schema/set.json'))));
+        return $schema;
+    }
+
+    private function makeGetAllAction(ParametersInterface $configuration): Action
+    {
+        $action = new Action();
+        $action->setName(self::ACTION_GET_ALL);
+        $action->setClass(RedisHashGetAll::class);
+        $action->setEngine(PhpClass::class);
+        $action->setConfig(ActionConfig::fromArray([
+            'connection' => $configuration->get('connection'),
+            'key' => $configuration->get('key'),
+        ]));
+        return $action;
+    }
+
+    private function makeGetAction(ParametersInterface $configuration): Action
+    {
+        $action = new Action();
+        $action->setName(self::ACTION_GET);
+        $action->setClass(RedisHashGet::class);
+        $action->setEngine(PhpClass::class);
+        $action->setConfig(ActionConfig::fromArray([
+            'connection' => $configuration->get('connection'),
+            'key' => $configuration->get('key'),
+        ]));
+        return $action;
+    }
+
+    private function makeSetAction(ParametersInterface $configuration): Action
+    {
+        $action = new Action();
+        $action->setName(self::ACTION_SET);
+        $action->setClass(RedisHashSet::class);
+        $action->setEngine(PhpClass::class);
+        $action->setConfig(ActionConfig::fromArray([
+            'connection' => $configuration->get('connection'),
+            'key' => $configuration->get('key'),
+        ]));
+        return $action;
+    }
+
+    private function makeDeleteAction(ParametersInterface $configuration): Action
+    {
+        $action = new Action();
+        $action->setName(self::ACTION_DELETE);
+        $action->setClass(RedisHashDelete::class);
+        $action->setEngine(PhpClass::class);
+        $action->setConfig(ActionConfig::fromArray([
+            'connection' => $configuration->get('connection'),
+            'key' => $configuration->get('key'),
+        ]));
+        return $action;
+    }
+
+    private function makeGetAllOperation(): Operation
+    {
+        $operation = new Operation();
+        $operation->setName('getAll');
+        $operation->setDescription('Returns a collection of fields');
+        $operation->setHttpMethod('GET');
+        $operation->setHttpPath('/');
+        $operation->setHttpCode(200);
+        $operation->setOutgoing(self::SCHEMA_GET_ALL);
+        $operation->setAction(self::ACTION_GET_ALL);
+        return $operation;
+    }
+
+    private function makeGetOperation(): Operation
+    {
+        $operation = new Operation();
+        $operation->setName('get');
+        $operation->setDescription('Returns a single field');
+        $operation->setHttpMethod('GET');
+        $operation->setHttpPath('/:field');
+        $operation->setHttpCode(200);
+        $operation->setOutgoing(self::SCHEMA_GET);
+        $operation->setAction(self::ACTION_GET);
+        return $operation;
+    }
+
+    private function makeSetOperation(): Operation
+    {
+        $operation = new Operation();
+        $operation->setName('set');
+        $operation->setDescription('Updates an existing field');
+        $operation->setHttpMethod('PUT');
+        $operation->setHttpPath('/:field');
+        $operation->setHttpCode(200);
+        $operation->setIncoming(self::SCHEMA_SET);
+        $operation->setOutgoing(SchemaName::MESSAGE);
+        $operation->setAction(self::ACTION_SET);
+        return $operation;
+    }
+
+    private function makeDeleteOperation(): Operation
+    {
+        $operation = new Operation();
+        $operation->setName('delete');
+        $operation->setDescription('Deletes an existing field');
+        $operation->setHttpMethod('DELETE');
+        $operation->setHttpPath('/:field');
+        $operation->setHttpCode(200);
+        $operation->setOutgoing(SchemaName::MESSAGE);
+        $operation->setAction(self::ACTION_DELETE);
+        return $operation;
     }
 }

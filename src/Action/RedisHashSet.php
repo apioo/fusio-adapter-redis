@@ -62,7 +62,7 @@ class RedisHashSet extends RedisAbstract
         return $this->response->build(200, [], [
             'success' => true,
             'message' => 'Field successfully set',
-            'return' => $return,
+            'id' => $return,
         ]);
     }
 }

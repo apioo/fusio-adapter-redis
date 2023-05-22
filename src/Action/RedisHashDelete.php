@@ -61,7 +61,7 @@ class RedisHashDelete extends RedisAbstract
         return $this->response->build(200, [], [
             'success' => true,
             'message' => 'Field successfully deleted',
-            'return' => $return,
+            'id' => $return,
         ]);
     }
 }
