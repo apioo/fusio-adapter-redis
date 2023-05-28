@@ -32,10 +32,10 @@ use Fusio\Engine\Generator\ProviderInterface;
 use Fusio\Engine\Generator\SetupInterface;
 use Fusio\Engine\ParametersInterface;
 use Fusio\Engine\Schema\SchemaName;
-use Fusio\Model\Backend\Action;
 use Fusio\Model\Backend\ActionConfig;
-use Fusio\Model\Backend\Operation;
-use Fusio\Model\Backend\Schema;
+use Fusio\Model\Backend\ActionCreate;
+use Fusio\Model\Backend\OperationCreate;
+use Fusio\Model\Backend\SchemaCreate;
 use Fusio\Model\Backend\SchemaSource;
 
 /**
@@ -83,33 +83,33 @@ class RedisHash implements ProviderInterface
         $builder->add($elementFactory->newInput('key', 'Key', 'text', 'Name of the key'));
     }
 
-    private function makeGetAllSchema(): Schema
+    private function makeGetAllSchema(): SchemaCreate
     {
-        $schema = new Schema();
+        $schema = new SchemaCreate();
         $schema->setName(self::SCHEMA_GET_ALL);
         $schema->setSource(SchemaSource::fromStdClass(\json_decode(\file_get_contents(__DIR__ . '/schema/get_all.json'))));
         return $schema;
     }
 
-    private function makeGetSchema(): Schema
+    private function makeGetSchema(): SchemaCreate
     {
-        $schema = new Schema();
+        $schema = new SchemaCreate();
         $schema->setName(self::SCHEMA_GET);
         $schema->setSource(SchemaSource::fromStdClass(\json_decode(\file_get_contents(__DIR__ . '/schema/get.json'))));
         return $schema;
     }
 
-    private function makeSetSchema(): Schema
+    private function makeSetSchema(): SchemaCreate
     {
-        $schema = new Schema();
+        $schema = new SchemaCreate();
         $schema->setName(self::SCHEMA_SET);
         $schema->setSource(SchemaSource::fromStdClass(\json_decode(\file_get_contents(__DIR__ . '/schema/set.json'))));
         return $schema;
     }
 
-    private function makeGetAllAction(ParametersInterface $configuration): Action
+    private function makeGetAllAction(ParametersInterface $configuration): ActionCreate
     {
-        $action = new Action();
+        $action = new ActionCreate();
         $action->setName(self::ACTION_GET_ALL);
         $action->setClass(RedisHashGetAll::class);
         $action->setEngine(PhpClass::class);
@@ -120,9 +120,9 @@ class RedisHash implements ProviderInterface
         return $action;
     }
 
-    private function makeGetAction(ParametersInterface $configuration): Action
+    private function makeGetAction(ParametersInterface $configuration): ActionCreate
     {
-        $action = new Action();
+        $action = new ActionCreate();
         $action->setName(self::ACTION_GET);
         $action->setClass(RedisHashGet::class);
         $action->setEngine(PhpClass::class);
@@ -133,9 +133,9 @@ class RedisHash implements ProviderInterface
         return $action;
     }
 
-    private function makeSetAction(ParametersInterface $configuration): Action
+    private function makeSetAction(ParametersInterface $configuration): ActionCreate
     {
-        $action = new Action();
+        $action = new ActionCreate();
         $action->setName(self::ACTION_SET);
         $action->setClass(RedisHashSet::class);
         $action->setEngine(PhpClass::class);
@@ -146,9 +146,9 @@ class RedisHash implements ProviderInterface
         return $action;
     }
 
-    private function makeDeleteAction(ParametersInterface $configuration): Action
+    private function makeDeleteAction(ParametersInterface $configuration): ActionCreate
     {
-        $action = new Action();
+        $action = new ActionCreate();
         $action->setName(self::ACTION_DELETE);
         $action->setClass(RedisHashDelete::class);
         $action->setEngine(PhpClass::class);
@@ -159,9 +159,9 @@ class RedisHash implements ProviderInterface
         return $action;
     }
 
-    private function makeGetAllOperation(): Operation
+    private function makeGetAllOperation(): OperationCreate
     {
-        $operation = new Operation();
+        $operation = new OperationCreate();
         $operation->setName('getAll');
         $operation->setDescription('Returns a collection of fields');
         $operation->setHttpMethod('GET');
@@ -172,9 +172,9 @@ class RedisHash implements ProviderInterface
         return $operation;
     }
 
-    private function makeGetOperation(): Operation
+    private function makeGetOperation(): OperationCreate
     {
-        $operation = new Operation();
+        $operation = new OperationCreate();
         $operation->setName('get');
         $operation->setDescription('Returns a single field');
         $operation->setHttpMethod('GET');
@@ -185,9 +185,9 @@ class RedisHash implements ProviderInterface
         return $operation;
     }
 
-    private function makeSetOperation(): Operation
+    private function makeSetOperation(): OperationCreate
     {
-        $operation = new Operation();
+        $operation = new OperationCreate();
         $operation->setName('set');
         $operation->setDescription('Updates an existing field');
         $operation->setHttpMethod('PUT');
@@ -199,9 +199,9 @@ class RedisHash implements ProviderInterface
         return $operation;
     }
 
-    private function makeDeleteOperation(): Operation
+    private function makeDeleteOperation(): OperationCreate
     {
-        $operation = new Operation();
+        $operation = new OperationCreate();
         $operation->setName('delete');
         $operation->setDescription('Deletes an existing field');
         $operation->setHttpMethod('DELETE');
