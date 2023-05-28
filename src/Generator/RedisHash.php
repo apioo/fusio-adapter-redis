@@ -87,7 +87,7 @@ class RedisHash implements ProviderInterface
     {
         $schema = new SchemaCreate();
         $schema->setName(self::SCHEMA_GET_ALL);
-        $schema->setSource(SchemaSource::fromStdClass(\json_decode(\file_get_contents(__DIR__ . '/schema/get_all.json'))));
+        $schema->setSource(SchemaSource::fromObject(\json_decode(\file_get_contents(__DIR__ . '/schema/get_all.json'))));
         return $schema;
     }
 
@@ -95,7 +95,7 @@ class RedisHash implements ProviderInterface
     {
         $schema = new SchemaCreate();
         $schema->setName(self::SCHEMA_GET);
-        $schema->setSource(SchemaSource::fromStdClass(\json_decode(\file_get_contents(__DIR__ . '/schema/get.json'))));
+        $schema->setSource(SchemaSource::fromObject(\json_decode(\file_get_contents(__DIR__ . '/schema/get.json'))));
         return $schema;
     }
 
@@ -103,7 +103,7 @@ class RedisHash implements ProviderInterface
     {
         $schema = new SchemaCreate();
         $schema->setName(self::SCHEMA_SET);
-        $schema->setSource(SchemaSource::fromStdClass(\json_decode(\file_get_contents(__DIR__ . '/schema/set.json'))));
+        $schema->setSource(SchemaSource::fromObject(\json_decode(\file_get_contents(__DIR__ . '/schema/set.json'))));
         return $schema;
     }
 
