@@ -60,7 +60,7 @@ class RedisHash implements ProviderInterface
         return 'Redis-Hash';
     }
 
-    public function setup(SetupInterface $setup, string $basePath, ParametersInterface $configuration): void
+    public function setup(SetupInterface $setup, ParametersInterface $configuration): void
     {
         $setup->addSchema($this->makeGetAllSchema());
         $setup->addSchema($this->makeGetSchema());
