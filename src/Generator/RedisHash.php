@@ -112,7 +112,6 @@ class RedisHash implements ProviderInterface
         $action = new ActionCreate();
         $action->setName(self::ACTION_GET_ALL);
         $action->setClass(RedisHashGetAll::class);
-        $action->setEngine(PhpClass::class);
         $action->setConfig(ActionConfig::fromArray([
             'connection' => $configuration->get('connection'),
             'key' => $configuration->get('key'),
@@ -125,7 +124,6 @@ class RedisHash implements ProviderInterface
         $action = new ActionCreate();
         $action->setName(self::ACTION_GET);
         $action->setClass(RedisHashGet::class);
-        $action->setEngine(PhpClass::class);
         $action->setConfig(ActionConfig::fromArray([
             'connection' => $configuration->get('connection'),
             'key' => $configuration->get('key'),
@@ -138,7 +136,6 @@ class RedisHash implements ProviderInterface
         $action = new ActionCreate();
         $action->setName(self::ACTION_SET);
         $action->setClass(RedisHashSet::class);
-        $action->setEngine(PhpClass::class);
         $action->setConfig(ActionConfig::fromArray([
             'connection' => $configuration->get('connection'),
             'key' => $configuration->get('key'),
@@ -151,7 +148,6 @@ class RedisHash implements ProviderInterface
         $action = new ActionCreate();
         $action->setName(self::ACTION_DELETE);
         $action->setClass(RedisHashDelete::class);
-        $action->setEngine(PhpClass::class);
         $action->setConfig(ActionConfig::fromArray([
             'connection' => $configuration->get('connection'),
             'key' => $configuration->get('key'),
