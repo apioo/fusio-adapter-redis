@@ -74,7 +74,7 @@ abstract class RedisAbstract extends ActionAbstract
         } elseif ($body instanceof RecordInterface && $body->containsKey('value')) {
             return $body->get('value');
         } else {
-            throw new BadRequestException('Provided an invalid request body');
+            throw new BadRequestException('Given request body must contain a "value" key');
         }
     }
 }
