@@ -21,24 +21,9 @@
 
 namespace Fusio\Adapter\Redis\Tests;
 
-use Fusio\Adapter\OpenStack\Connection\BlockStorage;
-use Fusio\Adapter\OpenStack\Connection\Compute;
-use Fusio\Adapter\OpenStack\Connection\Identity;
-use Fusio\Adapter\OpenStack\Connection\Images;
-use Fusio\Adapter\OpenStack\Connection\Networking;
-use Fusio\Adapter\OpenStack\Connection\ObjectStore;
-use Fusio\Adapter\Php\Action\PhpProcessor;
-use Fusio\Adapter\Php\Action\PhpSandbox;
-use Fusio\Adapter\Redis\Action\RedisHashDelete;
-use Fusio\Adapter\Redis\Action\RedisHashGet;
-use Fusio\Adapter\Redis\Action\RedisHashGetAll;
-use Fusio\Adapter\Redis\Action\RedisHashSet;
-use Fusio\Adapter\Redis\Connection\Redis;
-use Fusio\Adapter\Redis\Generator\RedisHash;
-use Fusio\Engine\Action\Runtime;
+use Fusio\Adapter\Redis\Adapter;
 use Fusio\Engine\Test\EngineTestCaseTrait;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\DependencyInjection\Container;
 
 /**
  * RedisTestCase
@@ -51,13 +36,8 @@ abstract class RedisTestCase extends TestCase
 {
     use EngineTestCaseTrait;
 
-    protected function configure(Runtime $runtime, Container $container): void
+    protected function getAdapterClass(): string
     {
-        $container->set(Redis::class, new Redis());
-        $container->set(RedisHashDelete::class, new RedisHashDelete($runtime));
-        $container->set(RedisHashGet::class, new RedisHashGet($runtime));
-        $container->set(RedisHashGetAll::class, new RedisHashGetAll($runtime));
-        $container->set(RedisHashSet::class, new RedisHashSet($runtime));
-        $container->set(RedisHash::class, new RedisHash());
+        return Adapter::class;
     }
 }
