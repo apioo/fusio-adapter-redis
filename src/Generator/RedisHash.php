@@ -24,7 +24,6 @@ use Fusio\Adapter\Redis\Action\RedisHashDelete;
 use Fusio\Adapter\Redis\Action\RedisHashGet;
 use Fusio\Adapter\Redis\Action\RedisHashGetAll;
 use Fusio\Adapter\Redis\Action\RedisHashSet;
-use Fusio\Engine\Factory\Resolver\PhpClass;
 use Fusio\Engine\Form\BuilderInterface;
 use Fusio\Engine\Form\ElementFactoryInterface;
 use Fusio\Engine\Generator\ProviderInterface;
@@ -36,6 +35,7 @@ use Fusio\Model\Backend\ActionCreate;
 use Fusio\Model\Backend\OperationCreate;
 use Fusio\Model\Backend\SchemaCreate;
 use Fusio\Model\Backend\SchemaSource;
+use PSX\Json\Parser;
 
 /**
  * RedisHash
@@ -86,7 +86,7 @@ class RedisHash implements ProviderInterface
     {
         $schema = new SchemaCreate();
         $schema->setName(self::SCHEMA_GET_ALL);
-        $schema->setSource(SchemaSource::fromObject(\json_decode(\file_get_contents(__DIR__ . '/schema/get_all.json'))));
+        $schema->setSource(SchemaSource::fromObject(Parser::decodeAsObject((string) \file_get_contents(__DIR__ . '/schema/get_all.json'))));
         return $schema;
     }
 
@@ -94,7 +94,7 @@ class RedisHash implements ProviderInterface
     {
         $schema = new SchemaCreate();
         $schema->setName(self::SCHEMA_GET);
-        $schema->setSource(SchemaSource::fromObject(\json_decode(\file_get_contents(__DIR__ . '/schema/get.json'))));
+        $schema->setSource(SchemaSource::fromObject(Parser::decodeAsObject((string) \file_get_contents(__DIR__ . '/schema/get.json'))));
         return $schema;
     }
 
@@ -102,7 +102,7 @@ class RedisHash implements ProviderInterface
     {
         $schema = new SchemaCreate();
         $schema->setName(self::SCHEMA_SET);
-        $schema->setSource(SchemaSource::fromObject(\json_decode(\file_get_contents(__DIR__ . '/schema/set.json'))));
+        $schema->setSource(SchemaSource::fromObject(Parser::decodeAsObject((string) \file_get_contents(__DIR__ . '/schema/set.json'))));
         return $schema;
     }
 

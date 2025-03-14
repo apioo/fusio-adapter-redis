@@ -26,6 +26,7 @@ use Fusio\Engine\Form\BuilderInterface;
 use Fusio\Engine\Form\ElementFactoryInterface;
 use Fusio\Engine\ParametersInterface;
 use Predis\Client;
+use Predis\PredisException;
 
 /**
  * Redis
@@ -70,7 +71,7 @@ class Redis extends ConnectionAbstract implements PingableInterface
                 $connection->ping();
 
                 return true;
-            } catch (\RedisException $e) {
+            } catch (PredisException $e) {
             }
         }
 
