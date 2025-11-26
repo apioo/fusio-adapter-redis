@@ -12,9 +12,4 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 return static function (ContainerConfigurator $container) {
     $services = ServiceBuilder::build($container);
     $services->set(Redis::class);
-    $services->set(RedisHashDelete::class);
-    $services->set(RedisHashGet::class);
-    $services->set(RedisHashGetAll::class);
-    $services->set(RedisHashSet::class);
-    $services->set(RedisHash::class);
 };
