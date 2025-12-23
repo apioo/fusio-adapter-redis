@@ -22,6 +22,7 @@ namespace Fusio\Adapter\Redis\Tests\Connection;
 
 use Fusio\Adapter\Redis\Connection\Redis;
 use Fusio\Adapter\Redis\Tests\RedisTestCase;
+use Fusio\Engine\ConfigurableInterface;
 use Fusio\Engine\Form\Builder;
 use Fusio\Engine\Form\Container;
 use Fusio\Engine\Form\Element\Input;
@@ -37,7 +38,7 @@ use Predis\Client;
  */
 class RedisTest extends RedisTestCase
 {
-    public function testGetConnection()
+    public function testGetConnection(): void
     {
         $connectionFactory = $this->getConnectionFactory()->factory(Redis::class);
 
@@ -55,11 +56,13 @@ class RedisTest extends RedisTestCase
         $this->assertEquals('bar', $connection->get('foo'));
     }
 
-    public function testConfigure()
+    public function testConfigure(): void
     {
         $connection = $this->getConnectionFactory()->factory(Redis::class);
         $builder    = new Builder();
         $factory    = $this->getFormElementFactory();
+
+        $this->assertInstanceOf(ConfigurableInterface::class, $connection);
 
         $connection->configure($builder, $factory);
 
@@ -71,7 +74,7 @@ class RedisTest extends RedisTestCase
         $this->assertInstanceOf(Input::class, $elements[1]);
     }
 
-    public function testPing()
+    public function testPing(): void
     {
         /** @var Redis $connectionFactory */
         $connectionFactory = $this->getConnectionFactory()->factory(Redis::class);
